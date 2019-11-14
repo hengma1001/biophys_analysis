@@ -56,8 +56,11 @@ def find_frame(traj_dict, frame_number=0):
     local_frame = frame_number
     for key in sorted(traj_dict.keys()): 
         if local_frame - int(traj_dict[key]) < 0: 
-            dir_name = os.path.dirname(key) 
-            traj_file = os.path.join(dir_name, 'output.dcd')             
+#             dir_name = os.path.dirname(key) 
+            if os.path.isdir(key):                 
+                traj_file = os.path.join(key, 'output.dcd') 
+            else: 
+                traj_file = key 
             return traj_file, local_frame
         else: 
             local_frame -= int(traj_dict[key])
