@@ -20,7 +20,12 @@ def triu_to_full(cm0):
 
 def read_h5py_file(h5_file): 
     cm_h5 = h5py.File(h5_file, 'r', libver='latest', swmr=True)
-    return cm_h5[u'contact_maps'] 
+    if 'contact_maps' in cm_h5.keys(): 
+        return cm_h5[u'contact_maps'] 
+    elif 'contacts' in cm_h5.keys(): 
+        return cm_h5['contacts'] 
+    else: 
+        return [] 
 
 
 def cm_to_cvae(cm_data_lists): 
