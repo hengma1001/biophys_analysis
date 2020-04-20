@@ -2,15 +2,19 @@ import os
 import h5py 
 import numpy as np 
 
+import sys 
+sys.path.append('../py_modules') 
+
 from sklearn.cluster import MiniBatchKMeans 
 from sklearn.cluster import KMeans 
 from sklearn.externals import joblib 
 
 from cvae.CVAE import CVAE 
 
-model_weight = './cvae_weight.h5'
+model_weight = '../../CVAE_exps/cvae_runs_03_1585670249/cvae_weight.h5'
+h5_file = '../traj_analysis/contact_maps.h5' 
 
-cm_h5 = h5py.File('./contact_maps_all.h5', 'r')
+cm_h5 = h5py.File(h5_file, 'r')
 cvae_input = cm_h5['contact_maps']
 
 def predict_from_cvae(model_weight, cvae_input, hyper_dim=3): 
@@ -23,7 +27,7 @@ def predict_from_cvae(model_weight, cvae_input, hyper_dim=3):
     return cm_predict
 
 
-cm_predict = predict_from_cvae(model_weight, cvae_input, hyper_dim=12) 
+cm_predict = predict_from_cvae(model_weight, cvae_input, hyper_dim=3) 
 
 # # KMeans clustering 
 # kmeans = KMeans(n_clusters=1000, random_state=0).fit(cm_predict) 

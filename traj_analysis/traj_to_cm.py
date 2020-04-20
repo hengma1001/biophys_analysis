@@ -12,25 +12,27 @@ from utils import triu_to_full
 
 print("Calculating contact maps from MD trajectories") 
 
-pdb_files = sorted(glob.glob('../../DeepDriveMD/protein_only/omm_runs_*/*.pdb')) 
-dcd_files = sorted(glob.glob('../../DeepDriveMD/protein_only/omm_runs_*/*.dcd'))
+pdb_files = sorted(glob.glob('../../protein_only/omm_runs_*/*.pdb')) 
+dcd_files = sorted(glob.glob('../../protein_only/omm_runs_*/*.dcd'))
 
 contact_maps = []
 labels = []
+label_kinds = set()
 # mda_traj = mda.Universe(pdb_file, dcd_files)  
 # protein_ca = mda_traj.select_atoms('protein and name CA') 
 		
-for pdb, dcd in zip(pdb_files, dcd_files): 
+for pdb, dcd in tqdm(zip(pdb_files, dcd_files)): 
     mda_traj = mda.Universe(pdb, dcd) 
     protein_ca = mda_traj.select_atoms('protein and name CA')
     label = os.path.basename(os.path.dirname(pdb)).split('_')[2]
+    label_kinds.add(label) 
 
-    for _ in tqdm(mda_traj.trajectory): 
+    for _ in mda_traj.trajectory: 
             contact_map = triu_to_full(
                     (distances.self_distance_array(protein_ca.positions) < 8.0) * 1.0
                     )
             contact_maps.append(contact_map) 
-            labels.append(label) 
+            labels.append(len(label_kinds)-1) 
 
 contact_maps = np.array(contact_maps)
 
