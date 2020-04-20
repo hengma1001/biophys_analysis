@@ -8,29 +8,34 @@ from tqdm import tqdm
 
 import MDAnalysis as mda 
 from MDAnalysis.analysis import distances 
+sys.path.append("../py_modules") 
+from utils import triu_to_full
 
-print "Calculating contact maps from MD trajectories" 
+print("Calculating contact maps from MD trajectories") 
 
-pdb_files = sorted(glob.glob('../../*/*_input.pdb'))
-json_files = sorted(glob.glob('../../*/*_input.json')) 
-dcd_files = sorted(glob.glob('../../*/run_*/output.dcd'))
-
-print(pdb_files, json_files, dcd_files) 
+pdb_files = sorted(glob.glob('../../MD_trajs/*_run_*/*.pdb')) 
+dcd_files = sorted(glob.glob('../../MD_trajs/*_run_*/*.dcd'))
 
 contact_maps = []
-for i, dcd_file in enumerate(dcd_files): 
-    # get the right pdb and json 
-    pdb_file = pdb_files[i//2] 
-    json_file = json_files[i//2]
-    xy = json.load(open(json_file, 'r'))
-    x = xy['x'] 
-    y = xy['y'] 
-    mda_traj = mda.Universe(pdb_file, dcd_file)  
-    protein_ca = mda_traj.select_atoms('protein and name CA') 
-                    
-    for _ in tqdm(mda_traj.trajectory): 
-        contact_map = (distances.distance_array(protein_ca[x].positions, protein_ca[y].positions) < 8.0) * 1.0
-        contact_maps.append(contact_map) 
+labels = []
+label_kinds = set()
+# mda_traj = mda.Universe(pdb_file, dcd_files)  
+# protein_ca = mda_traj.select_atoms('protein and name CA') 
+		
+for pdb, dcd in tqdm(zip(pdb_files, dcd_files)): 
+    mda_traj = mda.Universe(pdb, dcd) 
+    protein_ca = mda_traj.select_atoms('protein and name CA')
+    label = os.path.basename(os.path.dirname(pdb)).split('_')[1]
+    label_kinds.add(label) 
+    json_file = '../../sel_resnum/%s_input.json' % label 
+    res_dict = json.load(open(json_file, 'r'))
+    resl_1 = res_dict['x']
+    resl_2 = res_dict['y'] 
+
+    for _ in mda_traj.trajectory: 
+            contact_map = (distances.distance_array(protein_ca.positions[resl_1], protein_ca.positions[resl_2]) < 8.0) * 1.0
+            contact_maps.append(contact_map) 
+            labels.append(len(label_kinds)-1) 
 
 contact_maps = np.array(contact_maps)
 
@@ -44,9 +49,10 @@ contact_maps = np.pad(contact_maps, padding_buffer, mode='constant')
 
 contact_maps = contact_maps.reshape((contact_maps.shape) + (1,))
 
-cm_h5 = h5py.File('contact_maps_mpro.h5', 'w') 
+cm_h5 = h5py.File('contact_maps.h5', 'w') 
 cm_h5.create_dataset('contact_maps', data=contact_maps) 
+cm_h5.create_dataset('system', data=labels) 
 cm_h5.close() 
 
-print 'Done'
+print('Done')
 # print dcd_files 
