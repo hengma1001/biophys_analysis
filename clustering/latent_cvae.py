@@ -11,7 +11,7 @@ from sklearn.externals import joblib
 
 from cvae.CVAE import CVAE 
 
-model_weight = '../../CVAE_exps/cvae_runs_03_1585670249/cvae_weight.h5'
+model_weight = '../../../../DeepDriveMD/mpro/CVAE_exps/cvae_runs_03_1586199136//cvae_weight.h5'
 h5_file = '../traj_analysis/contact_maps.h5' 
 
 cm_h5 = h5py.File(h5_file, 'r')
