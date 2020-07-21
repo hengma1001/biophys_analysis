@@ -85,7 +85,7 @@ for i in range(rank, n_runs, size):
 
     # Collect information for performance assessment of CVAE 
     cvae_info_dict['predict_time'] = predict_time  
-    h5py_save('latent.h5', cm_embedded, 'latent') 
+    h5py_save(cvae_path + '/latent.h5', cm_embedded, 'latent') 
     print('Predicting time is ', predict_time)
 
     cvae_info_file = cvae_path + '/cvae_info.json'
