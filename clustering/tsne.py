@@ -24,18 +24,3 @@ h5_save.create_dataset('tsne', data=cm_tsne)
 
 h5_save.close() 
 
-
-# In[37]:
-
-
-h5_save = h5py.File('./tsne_fsp.h5', 'r') 
-
-print(list(h5_save.items()))
-
-
-
-# In[ ]:
-
-
-
-
