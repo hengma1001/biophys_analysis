@@ -30,4 +30,4 @@ for run in runs:
                    'dist': dist}) 
 
 df = pd.DataFrame(df) 
-df.to_pickle('nsp10_16_distance.pkl') 
+df.to_pickle('nsp10_16_distance.pkl', protocol=2) 
