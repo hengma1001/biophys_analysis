@@ -21,7 +21,7 @@ else:
     warnings.warn("No input dirname given, using current directory...") 
     cm_filepath = os.path.abspath(os.path.join('.', 'omm*/*_cm.h5'))
 
-cm_files = sorted(glob(cm_filepath))[:30] 
+cm_files = sorted(glob(cm_filepath))[:60] 
 if cm_files == []: 
     raise IOError("No h5 file found, recheck your input filepath") 
 # Get a list of opened h5 files 
