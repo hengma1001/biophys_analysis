@@ -17,6 +17,10 @@ def triu_to_full(cm0):
     np.fill_diagonal(cm_full, 1)
     return cm_full
 
+def sparse_to_full(sparse_cm):
+    full_cm = np.zeros(max(sparse_cm) + 1) 
+    full_cm[sparse_cm] = 1 
+    return full_cm
 
 def read_h5py_file(h5_file): 
     cm_h5 = h5py.File(h5_file, 'r', libver='latest', swmr=True)
