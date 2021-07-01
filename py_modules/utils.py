@@ -26,7 +26,12 @@ def read_h5py_file(h5_file):
     cm_h5 = h5py.File(h5_file, 'r', libver='latest', swmr=True)
     return cm_h5[u'contact_maps'] 
 
-
+def coord_polar_to_euc(r, theta, phi): 
+    x = r * np.sin(phi) * np.cos(theta) 
+    y = r * np.sin(phi) * np.sin(theta)
+    z = r * np.cos(phi)
+    return x, y, z
+    
 def cm_to_cvae(cm_data_lists): 
     """
     A function converting the 2d upper triangle information of contact maps 
