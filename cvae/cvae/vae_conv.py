@@ -269,8 +269,12 @@ class conv_variational_autoencoder(object):
         if checkpoint and filepath is None:
             raise Exception("Please enter a path to save the network")
 
-        self.model.fit(data, data, batch_size, epochs=epochs, shuffle=True,
-                       validation_data=(data, data), callbacks=[self.history])
+        # validation_data = validation_data if validation_data else data
+
+        self.model.fit(data, data, batch_size, 
+                epochs=epochs, shuffle=True,                       
+                validation_data=(validation_data, validation_data), 
+                callbacks=[self.history])
 
     def save(self, filepath):
         '''
