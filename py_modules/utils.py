@@ -1,11 +1,25 @@
-import os 
-import numpy as np
+import os
 import h5py 
 import errno 
+# from platform import python_implementation 
+import numpy as np
+from numpy import linalg as LA
 import MDAnalysis as mda 
-# from cvae.CVAE import CVAE
-# from keras import backend as K 
 from sklearn.cluster import DBSCAN 
+
+def dist_pbc(a, b, box=None):
+    """
+    calculate distance between two points
+    in PBC box
+    """
+    assert len(a) == len(b)
+    box = box[:len(a)]
+    a = a % box
+    b = b % box
+    dist_vec = np.abs(a - b)
+    dist_vec = np.abs(dist_vec - box * (dist_vec > box/2))
+    return LA.norm(dist_vec)
+    print(dist_vec)
 
 def triu_to_full(cm0):
     num_res = int(np.ceil((len(cm0) * 2) ** 0.5))
@@ -32,6 +46,12 @@ def coord_polar_to_euc(r, theta, phi):
     z = r * np.cos(phi)
     return x, y, z
     
+def coord_euc_to_polar(x, y, z): 
+    r = np.sqrt(x**2 + y**2 + z**2)
+    phi = np.arccos(z / r)
+    theta = np.arcsin(y / (r * np.sin(phi)))
+    return r, theta, phi
+
 def cm_to_cvae(cm_data_lists): 
     """
     A function converting the 2d upper triangle information of contact maps 
