@@ -19,7 +19,14 @@ def dist_pbc(a, b, box=None):
     dist_vec = np.abs(a - b)
     dist_vec = np.abs(dist_vec - box * (dist_vec > box/2))
     return LA.norm(dist_vec)
-    print(dist_vec)
+
+def get_angle(pos1, pos2, pos3): 
+    """get the angle of 1-2-3"""
+    vec1 = pos1 - pos2
+    vec2 = pos3 - pos2
+    ang = np.arccos(sum(vec1*vec2) / (LA.norm(vec1) * LA.norm(vec2)))
+    return ang * 180 / np.pi
+
 
 def triu_to_full(cm0):
     num_res = int(np.ceil((len(cm0) * 2) ** 0.5))
@@ -102,14 +109,6 @@ def write_pdb_frame(traj_file, pdb_file, frame_number, output_pdb):
     PDB = mda.Writer(output_pdb)
     PDB.write(mda_traj.atoms)     
     return output_pdb
-
-def make_dir_p(path_name): 
-    try:
-        os.mkdir(path_name)
-    except OSError as exc:
-        if exc.errno != errno.EEXIST:
-            raise
-        pass
 
 # def predict_from_cvae(model_weight, cvae_input, hyper_dim=3): 
 #     os.environ["CUDA_DEVICE_ORDER"]="PCI_BUS_ID"
