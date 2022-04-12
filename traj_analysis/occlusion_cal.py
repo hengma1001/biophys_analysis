@@ -19,7 +19,7 @@ from grid_analysis import atoms_grids
 for _ in logging.root.manager.loggerDict:
     logging.getLogger(_).setLevel(logging.CRITICAL)
 
-debug = 0
+debug = 1
 logger_level = logging.DEBUG if debug else logging.INFO
 logging.basicConfig(level=logger_level, format='%(asctime)s %(message)s')
 logger = logging.getLogger(__name__)
@@ -42,6 +42,7 @@ if rank == 0:
 ref_mda_u = mda.Universe(ref_pdb_file)
 sam_atoms = ref_mda_u.select_atoms('resname SAM')
 sam_ags =  atoms_grids(sam_atoms, ref_top_file, grid_size)
+logger.debug(f"{len(sam_ags)} grids from SAM molecule: {len(sam_ags)* grid_size**3} A^3")
 
 # get the baseline
 sam_neighs = ref_mda_u.select_atoms(f'around {cutoff} (resname SAM)')
@@ -51,6 +52,7 @@ pro_ags = atoms_grids(sam_neighs, ref_top_file, grid_size)
 grids_overlap = sam_ags.occupied_grids.intersection(pro_ags.occupied_grids)
 logger.debug(f"{len(grids_overlap)} grids overlapping between SAM and protein: {len(grids_overlap)* grid_size**3} A^3")
 
+exit()
 
 # create holding list
 df = []
