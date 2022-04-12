@@ -62,7 +62,7 @@ class atom_grid(grid):
         return occupied_grids
 
 
-class atoms_grids(): 
+class atoms_grids(list): 
     def __init__(self, atoms, top_file:str, grid_size:float):
         self.atoms = atoms 
         self.grid_size = grid_size
@@ -72,19 +72,10 @@ class atoms_grids():
                 for pos, radius in zip(self.atoms.positions, self.atom_radii)]
         self.occupied_grids = set(chain(*[grid.get_occupied_grids() for grid in self.atom_grids]))
 
+    def __len__(self): 
+        return len(self.occupied_grids)
+
     def assign_atom_radii(self): 
         atom_radii = [self.top.atoms[i].sigma/2 for i in self.atoms.indices]
         return np.array(atom_radii)
     
-# def get_atoms_grids(atom_positions, atom_radii, grid_size): 
-#      atoms_grids = [atom_grid(pos, radius, grid_size) 
-#             for pos, radius in zip(atom_positions, atom_radii)]
-#      atoms_grids_occ = [grid.get_occupied_grids() for grid in atoms_grids]
-#      return set(atoms_grids_occ)
-
-# def get_atom_radii(top_file, atom_indices): 
-#     top = pmd.load_file(top_file)
-#     return [top.atoms[i].sigma / 2 for i in atom_indices]
-
-
-
