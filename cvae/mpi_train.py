@@ -1,6 +1,7 @@
 import os 
 import time
 # import sys, errno
+import GPUtil
 import argparse 
 import json 
 from mpi4py import MPI
@@ -42,13 +43,16 @@ n_runs = int(args.num_runs)
 batch_size = int(args.batch_size) 
 num_frame = args.num_frame 
 epochs = int(args.epochs)
+deviceIDs = GPUtil.getAvailable(limit=size, maxLoad = 0.5, maxMemory = 0.5)
+n_gpu = len(deviceIDs)
+dims = [3, 10] 
 
 if not os.path.exists(cvae_input):
     raise IOError('Input file doesn\'t exist...')
 
 for i in range(rank, n_runs, size): 
-    dim = i + 3 
-    gpu_id = i % size 
+    dim = dims[i] 
+    gpu_id = deviceIDs[rank % size] 
     cvae_path = f'cvae_{dim:02}'
     os.makedirs(cvae_path, exist_ok=True)
     # os.chdir(cvae_path)
